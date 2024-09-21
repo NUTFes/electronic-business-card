@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   front:
     build:
@@ -12,8 +10,6 @@ services:
       - "8000:3000"
     stdin_open: true
     tty: true
-    env_file:
-      - ./settings/front.env
 
   back:
     build: ./back/ #Dockfileのある場所
@@ -31,8 +27,8 @@ services:
       - 13000:13000 # ホスト側：コンテナ側でポートフォワーディング　8000は被りやすいので13000に
 
   mydb:
-    image: mysql:8.0.20
-    container_name: my-db #コンテナ名の指定　DBはあった方が良い
+    image: mysql:8.0.32
+    container_name: mydb #コンテナ名の指定　DBはあった方が良い
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
