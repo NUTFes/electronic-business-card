@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import InputBox from "@/components/InputBox/index";
+import Hero from "@/components/Hero/index";
 
 interface Product {
   id: number;
@@ -18,16 +20,8 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Product List</h1>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p>{product.price}</p>
-          </li>
-        ))}
-      </ul>
+      <Hero />
+      <InputBox />
     </div>
   );
 }
