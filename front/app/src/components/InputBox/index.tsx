@@ -9,6 +9,7 @@ export default function Home() {
     office: "",
     grade: "",
   });
+  const [loading, setLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   const handleChange = (
@@ -25,16 +26,20 @@ export default function Home() {
     if (cardRef.current === null) {
       return;
     }
+
+    setLoading(true); // ロード状態をtrueに設定
     toPng(cardRef.current)
       .then((dataUrl: string) => {
         download(dataUrl, "profile-card.png");
       })
       .catch((err: Error) => {
         console.error("Oops, something went wrong!", err);
+      })
+      .finally(() => {
+        setLoading(false); // 処理が完了したらロード状態をfalseに設定
       });
   };
 
-  // 背景色をofficeの値によって変更
   const getBackgroundColor = (office: string) => {
     switch (office) {
       case "企画局":
@@ -67,6 +72,7 @@ export default function Home() {
             backgroundColor: getBackgroundColor(profile.office),
             color: "white",
           }}
+          className={s.card}
         >
           <h2>Profile Card</h2>
           <p> 名前：{profile.name}</p>
@@ -81,6 +87,7 @@ export default function Home() {
             <input
               type="text"
               name="name"
+              placeholder="例)長岡　太郎(おかたろ)"
               value={profile.name}
               onChange={handleChange}
             />
@@ -103,11 +110,7 @@ export default function Home() {
           </div>
           <div className={s.inputForm}>
             <label>学年</label>
-            <select
-              name="grade"
-              value={profile.grade}
-              onChange={handleChange}
-            >
+            <select name="grade" value={profile.grade} onChange={handleChange}>
               <option value="">-------</option>
               <option value="B1">B1</option>
               <option value="B2">B2</option>
@@ -120,8 +123,12 @@ export default function Home() {
         </form>
       </div>
       <div className={s.component}>
-        <button onClick={handleDownload} style={{ marginTop: "20px" }}>
-          生成する
+        <button
+          onClick={handleDownload}
+          className={s.button}
+          disabled={loading}
+        >
+          {loading ? <div className={s.spinner}></div> : "生成する"}
         </button>
       </div>
     </div>
