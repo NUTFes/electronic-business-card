@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
 import s from "./index.module.css";
@@ -11,6 +11,72 @@ export default function Home() {
   });
   const [loading, setLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const textTopRef = useRef<HTMLDivElement | null>(null);
+
+  // 背景画像のURLをstateに追加
+  const [backgroundImage, setBackgroundImage] = useState<string>(
+    "/images/default.png"
+  );
+
+  // 文字色の状態を管理
+  const [textColor, setTextColor] = useState<string>("#000000"); // デフォルトの文字色
+
+  useEffect(() => {
+    const textElement = textTopRef.current;
+    if (textElement) {
+      const maxFontSize = 24;
+      const minFontSize = 16;
+      let fontSize = maxFontSize;
+      const containerWidth = textElement.offsetWidth;
+
+      textElement.style.fontSize = `${fontSize}px`;
+
+      while (
+        textElement.scrollWidth > containerWidth &&
+        fontSize > minFontSize
+      ) {
+        fontSize -= 1;
+        textElement.style.fontSize = `${fontSize}px`;
+
+        const topValue = 25 - (maxFontSize - fontSize) / 12;
+        textElement.style.top = `${topValue}%`;
+      }
+    }
+  }, [profile.name]);
+
+  // officeの値が変更されたときに背景画像と文字色を更新
+  useEffect(() => {
+    switch (profile.office) {
+      case "企画局":
+        setBackgroundImage("/images/kikaku.png");
+        setTextColor("#CB1C1C");
+        break;
+      case "財務局":
+        setBackgroundImage("/images/zaimu.png");
+        setTextColor("#529B30");
+        break;
+      case "渉外局":
+        setBackgroundImage("/images/shougai.png");
+        setTextColor("#2C7184");
+        break;
+      case "情報局":
+        setBackgroundImage("/images/jyoho.png");
+        setTextColor("#d26e27");
+        break;
+      case "制作局":
+        setBackgroundImage("/images/seisaku.png");
+        setTextColor("#8030A5");
+        break;
+      case "総務局":
+        setBackgroundImage("/images/soumu.png");
+        setTextColor("#414040");
+        break;
+      default:
+        setBackgroundImage("/images/default.png");
+        setTextColor("#000000");
+        break;
+    }
+  }, [profile.office]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -27,7 +93,7 @@ export default function Home() {
       return;
     }
 
-    setLoading(true); // ロード状態をtrueに設定
+    setLoading(true);
     toPng(cardRef.current)
       .then((dataUrl: string) => {
         download(dataUrl, "profile-card.png");
@@ -36,27 +102,8 @@ export default function Home() {
         console.error("Oops, something went wrong!", err);
       })
       .finally(() => {
-        setLoading(false); // 処理が完了したらロード状態をfalseに設定
+        setLoading(false);
       });
-  };
-
-  const getBackgroundColor = (office: string) => {
-    switch (office) {
-      case "企画局":
-        return "blue";
-      case "財務局":
-        return "green";
-      case "渉外局":
-        return "red";
-      case "情報局":
-        return "purple";
-      case "制作局":
-        return "orange";
-      case "総務局":
-        return "yellow";
-      default:
-        return "gray"; // デフォルトの色
-    }
   };
 
   return (
@@ -65,19 +112,20 @@ export default function Home() {
       <div className={s.component}>
         <div
           ref={cardRef}
-          style={{
-            border: "1px solid black",
-            padding: "10px",
-            marginTop: "20px",
-            backgroundColor: getBackgroundColor(profile.office),
-            color: "white",
-          }}
           className={s.card}
+          style={{ backgroundImage: `url(${backgroundImage})` }} // 背景画像を動的に変更
         >
-          <h2>Profile Card</h2>
-          <p> 名前：{profile.name}</p>
-          <p> 所属局：{profile.office}</p>
-          <p> 学年：{profile.grade}</p>
+          {/* テキスト要素の配置 */}
+          <div
+            ref={textTopRef}
+            className={s.textTop}
+            style={{ color: textColor }}
+          >
+            {profile.name}
+          </div>
+          <div className={s.textMiddle} style={{ color: textColor }}>
+            {profile.grade}
+          </div>
         </div>
       </div>
       <div className={s.component}>
