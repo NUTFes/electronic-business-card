@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef, useEffect } from "react";
 import { toPng } from "html-to-image";
 import download from "downloadjs";
