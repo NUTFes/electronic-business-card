@@ -10,7 +10,7 @@ const kosugiMaru = Kosugi_Maru({
 
 export const metadata: Metadata = {
   title: "electronic-business-card",
-  description: "電子名刺のデザイン",
+  description: "電子名刺のデザインです。",
 };
 
 export default function RootLayout({
