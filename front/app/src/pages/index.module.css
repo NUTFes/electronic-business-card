@@ -2,6 +2,8 @@
   margin: 0 auto;
   padding: 0;
   width: 50%;
+  display: flex; 
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
@@ -12,4 +14,11 @@
 }
 .component:first-child {
   padding-top: 50px;
+}
+
+/*スマホ*/
+@media (max-width: 600px) {
+  .container {
+    width: 70%;
+  }
 }
